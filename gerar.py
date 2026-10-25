@@ -17,7 +17,7 @@ IMG, AUD, CLIP = OUT / "img", OUT / "audio", OUT / "clips"
 FPS, LARG, ALT = 30, 1920, 1080
 PAUSA = 0.45  # silêncio no fim de cada cena (s)
 
-MODELO_IMG = "gpt-image-1"
+MODELO_IMG = "gpt-image-2"
 QUALIDADE_IMG = "medium"  # low | medium | high
 MODELO_TTS, VOZ = "gpt-4o-mini-tts", "onyx"
 INSTR_TTS = ("Narre em português do Brasil, com voz masculina grave e envolvente, como um "
