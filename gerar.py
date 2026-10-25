@@ -143,8 +143,8 @@ def montar(sem_audio=False):
         "\n".join(f"{n}\n{tc(a)} --> {tc(b)}\n{txt}\n" for n, (a, b, txt) in enumerate(srt, 1)),
         encoding="utf-8")
     (OUT / "lista.txt").write_text("\n".join(lista), encoding="utf-8")
-    estilo = ("FontName=DejaVu Sans,Bold=1,FontSize=14,PrimaryColour=&H00FFF8F4,"
-              "OutlineColour=&H00261408,BorderStyle=1,Outline=2,Shadow=0,Alignment=2,MarginV=40")
+    estilo = (f"FontName=DejaVu Sans,Bold=1,FontSize={20 if sem_audio else 14},PrimaryColour=&H00FFF8F4,"
+              "OutlineColour=&H00261408,BorderStyle=1,Outline=3,Shadow=0,Alignment=2,MarginV=30")
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0",
                     "-i", str(OUT / "lista.txt"), "-vf",
                     f"subtitles={OUT / 'legendas.srt'}:force_style='{estilo}'",
