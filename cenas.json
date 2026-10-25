@@ -48,7 +48,7 @@
  {"texto": "E Steve Jobs? Ele não era o melhor engenheiro da Apple. Mas sabia liderar, inspirar, vender uma visão. É por isso que a Apple virou uma das empresas mais valiosas do planeta.",
   "visual": "Rico pose BRAÇOS ABERTOS (como num palco), expressão CONFIANTE, diante de uma plateia em silhueta navy. Legenda 'Steve Jobs — liderar, inspirar, vender uma visão'. Não retratar o rosto de pessoa real e não usar logotipos de marcas.", "mov": "zoom_in"},
  {"texto": "As três regras que mudam tudo! Se você quer riqueza de verdade… guarde três regras.",
-  "visual": "Rico pose APONTANDO para um grande título 'AS 3 REGRAS QUE MUDAM TUDO' com três ícones numerados 1, 2, 3.", "mov": "zoom_out"},
+  "visual": "Rico pose APONTANDO para um grande título 'AS 3 REGRAS QUE MUDAM TUDO' com apenas três círculos numerados 1, 2, 3, sem nenhuma palavra embaixo dos números.", "mov": "zoom_out"},
  {"texto": "Primeira: pare de esperar o momento perfeito. Não existe momento perfeito. Só existe agora.",
   "visual": "Rico pose ANDANDO, expressão DETERMINADO, com um relógio de parede grande ao fundo e o texto 'REGRA 1 — AGORA'.", "mov": "pan_right"},
  {"texto": "Segunda: não tenha medo de errar. Erro não é fracasso. Erro é treino. Cada queda te aproxima mais do sucesso.",

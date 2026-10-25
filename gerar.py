@@ -44,7 +44,9 @@ def regras():
 def prompt_cena(c):
     return (f"{regras()}\n\nFORMATO: composição horizontal 16:9, com o personagem e os textos "
             f"importantes na área central (margens seguras).\n\nCENA: {c['visual']}\n"
-            "Mantenha o Rico idêntico à ficha de referência anexada.")
+            "Mantenha o Rico idêntico à ficha de referência anexada.\n"
+            "Não escreva na imagem nomes de pose, expressão, paleta, marca ou destas regras; "
+            "só os textos que a CENA pede explicitamente entre aspas.")
 
 
 def cliente():
