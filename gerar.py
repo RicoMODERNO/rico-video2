@@ -4,8 +4,8 @@
 Uso:
   export OPENAI_API_KEY=...
   python3 gerar.py imagens [--so 1,2,3]   # gera as imagens das cenas (cache em saida/img)
-  python3 gerar.py audio                   # gera a narração por cena (cache em saida/audio)
-  python3 gerar.py montar                  # clipes + legendas + vídeo final
+  python3 gerar.py audio [--so 1,2,3]      # gera a narração por cena (cache em saida/audio)
+  python3 gerar.py montar [--so 1,2,3]     # clipes + legendas + vídeo final
   python3 gerar.py tudo
 """
 import argparse, base64, json, re, subprocess, sys
@@ -66,12 +66,12 @@ def imagens(so=None):
         dest.write_bytes(base64.b64decode(r.data[0].b64_json))
 
 
-def audio():
+def audio(so=None):
     AUD.mkdir(parents=True, exist_ok=True)
     cli = cliente()
     for i, c in enumerate(cenas(), 1):
         dest = AUD / f"{i:02d}.mp3"
-        if dest.exists():
+        if dest.exists() or (so and i not in so):
             continue
         print(f"[tts] cena {i}")
         with cli.audio.speech.with_streaming_response.create(
@@ -102,10 +102,12 @@ def blocos(texto, max_pal=7):
     return out
 
 
-def montar():
+def montar(so=None):
     CLIP.mkdir(parents=True, exist_ok=True)
     srt, t0, lista = [], 0.0, []
     for i, c in enumerate(cenas(), 1):
+        if so and i not in so:
+            continue
         img, aud, clip = IMG / f"{i:02d}.png", AUD / f"{i:02d}.mp3", CLIP / f"{i:02d}.mp4"
         dur = duracao(aud) + PAUSA
         frames = int(dur * FPS)
@@ -149,5 +151,5 @@ if __name__ == "__main__":
     a = ap.parse_args()
     so = {int(x) for x in a.so.split(",")} if a.so else None
     if a.etapa in ("imagens", "tudo"): imagens(so)
-    if a.etapa in ("audio", "tudo"): audio()
-    if a.etapa in ("montar", "tudo"): montar()
+    if a.etapa in ("audio", "tudo"): audio(so)
+    if a.etapa in ("montar", "tudo"): montar(so)
