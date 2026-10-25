@@ -1,0 +1,4 @@
+IMPORTANT LANGUAGE REQUIREMENT:
+ALL visible text in the image MUST be written exclusively in Brazilian Portuguese (pt-BR).
+
+Never generate English text, English titles, English captions, or English labels.

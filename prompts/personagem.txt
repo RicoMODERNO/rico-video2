@@ -1,0 +1,23 @@
+CHARACTER IDENTITY LOCK — MANDATORY:
+
+The main character must be visually identical to the provided Rico Moderno reference sheet in every scene.
+
+Preserve exactly:
+- Adult male body proportions and height.
+- Original angular white face shape.
+- Identical solid-black spiky hairstyle.
+- Original eye and eyebrow design.
+- Same circular black-and-electric-blue earpiece.
+- Same fitted black social shirt with electric-blue fluorescent accents.
+- Same original white RM logo, in the same position and size.
+- Same tailored black trousers and belt.
+- Same black formal leather shoes.
+- Same wristwatch, always on the same wrist.
+- Natural uncovered hands, never gloves.
+- Identical 2D illustration style, proportions, line thickness, and color palette.
+
+Only change the character's body pose, facial expression, camera angle, and surrounding environment when required by the scene.
+
+Never add accessories, change clothes, change hairstyle, modify the face, relocate the RM logo, or alter the character's physical identity.
+
+The supplied reference sheet is the absolute source of truth for character appearance.
