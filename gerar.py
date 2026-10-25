@@ -6,6 +6,7 @@ Uso:
   python3 gerar.py imagens [--so 1,2,3]   # gera as imagens das cenas (cache em saida/img)
   python3 gerar.py audio                   # gera a narração por cena (cache em saida/audio)
   python3 gerar.py montar                  # clipes + legendas + vídeo final
+  python3 gerar.py montar --sem-audio      # sem narração: duração pelo tempo de leitura da legenda
   python3 gerar.py tudo
 """
 import argparse, base64, json, re, subprocess, sys
@@ -16,6 +17,7 @@ OUT = RAIZ / "saida"
 IMG, AUD, CLIP = OUT / "img", OUT / "audio", OUT / "clips"
 FPS, LARG, ALT = 30, 1920, 1080
 PAUSA = 0.45  # silêncio no fim de cada cena (s)
+LEITURA = 14  # caracteres por segundo de legenda no modo sem narração
 
 MODELO_IMG = "gpt-image-2"
 QUALIDADE_IMG = "medium"  # low | medium | high
@@ -104,12 +106,18 @@ def blocos(texto, max_pal=7):
     return out
 
 
-def montar():
-    CLIP.mkdir(parents=True, exist_ok=True)
+def montar(sem_audio=False):
+    clips = CLIP.with_name("clips_mudo") if sem_audio else CLIP
+    clips.mkdir(parents=True, exist_ok=True)
     srt, t0, lista = [], 0.0, []
     for i, c in enumerate(cenas(), 1):
-        img, aud, clip = IMG / f"{i:02d}.png", AUD / f"{i:02d}.mp3", CLIP / f"{i:02d}.mp4"
-        dur = duracao(aud) + PAUSA
+        img, aud, clip = IMG / f"{i:02d}.png", AUD / f"{i:02d}.mp3", clips / f"{i:02d}.mp4"
+        if sem_audio:
+            dur = max(2.5, len(c["texto"]) / LEITURA + 0.8) + PAUSA
+            entrada = ["-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo"]
+        else:
+            dur = duracao(aud) + PAUSA
+            entrada = ["-i", str(aud)]
         frames = int(dur * FPS)
         if not clip.exists():
             print(f"[clip] cena {i} ({dur:.1f}s)")
@@ -117,7 +125,7 @@ def montar():
             vf = (f"scale=2880:1920,crop=2880:1620,zoompan={zp}:d={frames}:s={LARG}x{ALT}:fps={FPS},"
                   f"fade=t=in:d=0.2,fade=t=out:st={dur - 0.2:.2f}:d=0.2,format=yuv420p")
             subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-loop", "1", "-i", str(img),
-                            "-i", str(aud), "-vf", vf, "-af", f"apad=pad_dur={PAUSA}",
+                            *entrada, "-vf", vf, "-af", f"apad=pad_dur={PAUSA}",
                             "-t", f"{dur:.3f}", "-c:v", "libx264", "-preset", "medium", "-crf", "18",
                             "-c:a", "aac", "-b:a", "192k", "-ar", "44100", str(clip)], check=True)
         lista.append(f"file '{clip}'")
@@ -130,6 +138,7 @@ def montar():
             srt.append((t, t + d, b))
             t += d
         t0 += dur
+    final = OUT / ("video_sem_narracao.mp4" if sem_audio else "video_final.mp4")
     (OUT / "legendas.srt").write_text(
         "\n".join(f"{n}\n{tc(a)} --> {tc(b)}\n{txt}\n" for n, (a, b, txt) in enumerate(srt, 1)),
         encoding="utf-8")
@@ -140,16 +149,17 @@ def montar():
                     "-i", str(OUT / "lista.txt"), "-vf",
                     f"subtitles={OUT / 'legendas.srt'}:force_style='{estilo}'",
                     "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-c:a", "aac",
-                    str(OUT / "video_final.mp4")], check=True)
-    print("OK ->", OUT / "video_final.mp4", f"({t0 / 60:.1f} min)")
+                    str(final)], check=True)
+    print("OK ->", final, f"({t0 / 60:.1f} min)")
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("etapa", choices=["imagens", "audio", "montar", "tudo"])
     ap.add_argument("--so", help="números das cenas, ex.: 1,2,3")
+    ap.add_argument("--sem-audio", action="store_true", help="monta sem narração")
     a = ap.parse_args()
     so = {int(x) for x in a.so.split(",")} if a.so else None
     if a.etapa in ("imagens", "tudo"): imagens(so)
-    if a.etapa in ("audio", "tudo"): audio()
-    if a.etapa in ("montar", "tudo"): montar()
+    if a.etapa in ("audio", "tudo") and not a.sem_audio: audio()
+    if a.etapa in ("montar", "tudo"): montar(a.sem_audio)
